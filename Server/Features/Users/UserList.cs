@@ -15,6 +15,12 @@ namespace Server.Features.Users
     {
         public class Query : IRequest<QueryResponse>
         {
+            /*public Query(int childId)
+            {
+                ChildId = childId;
+            }
+
+            public int ChildId { get; set; }*/
         }
 
         public class QueryHandler : IRequestHandler<Query, QueryResponse>
@@ -30,6 +36,13 @@ namespace Server.Features.Users
 
             public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
             {
+                /*var query = from p in _context.Persons
+                            join cp in _context.ChildPersons on p.PersonId equals cp.PersonId
+                            where cp.ChildId == request.ChildId
+                            select p;
+
+                var persons = await query.ToListAsync(cancellationToken);*/
+
                 var persons = await _context.Persons.OrderBy(x => x.Email).AsNoTracking().ToListAsync(cancellationToken);
 
                 var userList = _mapper.Map<List<Person>, List<User>>(persons);
