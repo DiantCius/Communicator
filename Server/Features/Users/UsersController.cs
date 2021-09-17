@@ -30,9 +30,9 @@ namespace Server.Features.Users
         }
 
         [HttpGet]
-        public Task<QueryResponse> Get(CancellationToken cancellationToken)
+        public Task<QueryResponse> Get(int id, CancellationToken cancellationToken)
         {
-            return _mediator.Send(new UserList.Query(), cancellationToken);
+            return _mediator.Send(new UserList.Query(id), cancellationToken);
         }
 
     }
