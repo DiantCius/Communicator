@@ -20,13 +20,13 @@ namespace Server.Features.Children
         }
 
         [HttpPost("add")]
-        public Task<AddChildResponse> Create([FromBody] AddChild.Command command, CancellationToken cancellationToken)
+        public Task<ChildrenResponse> Create([FromBody] AddChild.Command command, CancellationToken cancellationToken)
         {
             return _mediator.Send(command, cancellationToken);
         }
 
         [HttpGet]
-        public Task<QueryResponse> Get(CancellationToken cancellationToken)
+        public Task<ChildrenResponse> Get(CancellationToken cancellationToken)
         {
             return _mediator.Send(new ChildList.Query(), cancellationToken);
         }

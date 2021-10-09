@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Server.Domain;
 using Server.Infrastructure;
@@ -24,10 +25,12 @@ namespace Server.Features.Babysitters
         public class QueryHandler : IRequestHandler<Query, QueryResponse>
         {
             private readonly ApplicationContext _context;
+            private readonly IMapper _mapper;
 
-            public QueryHandler(ApplicationContext context)
+            public QueryHandler(ApplicationContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
             public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
@@ -39,9 +42,11 @@ namespace Server.Features.Babysitters
 
                 var babysitters = await query.ToListAsync(cancellationToken);
 
+                var babysitterList = _mapper.Map<List<Person>, List<Babysitter>>(babysitters);
+
                 return new QueryResponse
                 {
-                    Babysitters = babysitters,
+                    Babysitters = babysitterList,
                     Count = babysitters.Count()
                 };
             }
@@ -49,7 +54,7 @@ namespace Server.Features.Babysitters
     }
     public class QueryResponse
     {
-        public List<Person> Babysitters { get; set; }
+        public List<Babysitter> Babysitters { get; set; }
         public int Count { get; set; }
     }
 }

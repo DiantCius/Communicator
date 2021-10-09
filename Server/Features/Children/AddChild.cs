@@ -13,7 +13,7 @@ namespace Server.Features.Children
 {
     public class AddChild
     {
-        public class Command : IRequest<AddChildResponse>
+        public class Command : IRequest<ChildrenResponse>
         {
             public string Name { get; set; }
             public DateTime BirthDate { get; set; }
@@ -26,7 +26,7 @@ namespace Server.Features.Children
                 RuleFor(x => x.BirthDate).NotNull().NotEmpty();
             }
         }
-        public class Handler : IRequestHandler<Command, AddChildResponse>
+        public class Handler : IRequestHandler<Command, ChildrenResponse>
         {
             private readonly ApplicationContext _context;
             private readonly ICurrentUser _currentUser;
@@ -37,7 +37,7 @@ namespace Server.Features.Children
                 _currentUser = currentUser;
             }
 
-            public async Task<AddChildResponse> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<ChildrenResponse> Handle(Command request, CancellationToken cancellationToken)
             {
 
                 var parent = await _context.Persons.FirstAsync(x => x.Username == _currentUser.GetCurrentUsername(), cancellationToken);
@@ -61,15 +61,28 @@ namespace Server.Features.Children
                 await _context.Children.AddAsync(newChild, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                return new AddChildResponse
+                /*return new AddChildResponse
                 {
                     Child = newChild
+                };*/
+
+                var query = from c in _context.Children
+                            join ca in _context.ChildPersons on c.ChildId equals ca.ChildId
+                            where ca.PersonId == parent.PersonId
+                            select c;
+
+                var children = await query.ToListAsync(cancellationToken);
+
+                return new ChildrenResponse
+                {
+                    Children = children,
+                    Count = children.Count()
                 };
             }
         }
     }
-    public class AddChildResponse 
+    /*public class AddChildResponse 
     {
         public Child Child { get; set; }
-    }
+    }*/
 }

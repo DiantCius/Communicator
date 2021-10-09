@@ -36,6 +36,7 @@ namespace Server.Features.Users
 
             public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
             {
+                //returns users that are not babysitting child with specific id
                 var query = from pe in _context.Persons
                             where !(from p in _context.Persons
                                    join cp in _context.ChildPersons on p.PersonId equals cp.PersonId

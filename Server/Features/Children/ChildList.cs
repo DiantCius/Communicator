@@ -13,11 +13,11 @@ namespace Server.Features.Children
 {
     public class ChildList
     {
-        public class Query : IRequest<QueryResponse>
+        public class Query : IRequest<ChildrenResponse>
         {
         }
 
-        public class QueryHandler : IRequestHandler<Query, QueryResponse>
+        public class QueryHandler : IRequestHandler<Query, ChildrenResponse>
         {
             private readonly ApplicationContext _context;
             private readonly ICurrentUser _currentUser;
@@ -28,7 +28,7 @@ namespace Server.Features.Children
                 _currentUser = currentUser;
             }
 
-            public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<ChildrenResponse> Handle(Query request, CancellationToken cancellationToken)
             {
 
                 var currentUserUsername = _currentUser.GetCurrentUsername();
@@ -41,7 +41,7 @@ namespace Server.Features.Children
 
                 var children = await query.ToListAsync(cancellationToken);
 
-                return new QueryResponse
+                return new ChildrenResponse
                 {
                     Children = children,
                     Count = children.Count()
@@ -51,9 +51,9 @@ namespace Server.Features.Children
         }
     }
 
-    public class QueryResponse
+    /*public class QueryResponse
     {
         public List<Child> Children { get; set; }
         public int Count { get; set; }
-    }
+    }*/
 }
