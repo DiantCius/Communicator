@@ -37,7 +37,7 @@ namespace Server.Features.Activities
             }
         }
 
-        public class Handler : IRequestHandler<Command, ActivityResponse>
+        public class Handler : ActivityList, IRequestHandler<Command, ActivityResponse>
         {
             private readonly ApplicationContext _context;
 
@@ -59,7 +59,7 @@ namespace Server.Features.Activities
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                var activities = await _context.Activities.OrderBy(x => x.ActivityId).AsNoTracking().ToListAsync(cancellationToken); // mozna do funkcji potem wyodrebnic
+                /*var activities = await _context.Activities.OrderBy(x => x.ActivityId).AsNoTracking().ToListAsync(cancellationToken); // mozna do funkcji potem wyodrebnic
                 var activityList = activities.Where(x => x.ChildId == request.ChildId).ToList();
 
                 var authorList = await _context.Persons.ToListAsync(cancellationToken);
@@ -67,7 +67,9 @@ namespace Server.Features.Activities
                 foreach (Activity activity in activityList)
                 {
                     activity.Author = authorList.Find(x => x.PersonId == activity.AuthorId);
-                }
+                }*/
+
+                var activityList = await GetActivitiesAsync(_context, cancellationToken, request.ChildId);
 
                 return new ActivityResponse
                 {
