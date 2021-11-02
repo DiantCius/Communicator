@@ -28,11 +28,11 @@ namespace Server.Infrastructure.Errors
             }
             catch(Exception ex)
             {
-                await HandleException(ex, httpContext);
+                await HandleException(httpContext, ex);
             }
         }
 
-        private static async Task HandleException(Exception ex, HttpContext context)
+        private async Task HandleException(HttpContext context, Exception ex)
         {
             string result = null;
             switch(ex)

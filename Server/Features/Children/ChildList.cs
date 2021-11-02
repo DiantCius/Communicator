@@ -17,7 +17,7 @@ namespace Server.Features.Children
         {
         }
 
-        public class QueryHandler : IRequestHandler<Query, ChildrenResponse>
+        public class QueryHandler : ChildList, IRequestHandler<Query, ChildrenResponse>
         {
             private readonly ApplicationContext _context;
             private readonly ICurrentUser _currentUser;
@@ -34,12 +34,14 @@ namespace Server.Features.Children
                 var currentUserUsername = _currentUser.GetCurrentUsername();
                 var currentUser = await _context.Persons.FirstAsync(x => x.Username == currentUserUsername, cancellationToken);
 
-                var query = from c in _context.Children
+                /*var query = from c in _context.Children
                             join ca in _context.ChildPersons on c.ChildId equals ca.ChildId
                             where ca.PersonId == currentUser.PersonId
                             select c;
 
-                var children = await query.ToListAsync(cancellationToken);
+                var children = await query.ToListAsync(cancellationToken);*/
+
+                var children = await GetChildrenAsync(_context, currentUser, cancellationToken);
 
                 return new ChildrenResponse
                 {
@@ -48,6 +50,18 @@ namespace Server.Features.Children
                 };
                 
             }
+        }
+
+        public async Task<List<Child>> GetChildrenAsync(ApplicationContext applicationContext, Person currentUser, CancellationToken cancellationToken )
+        {
+            var query = from c in applicationContext.Children
+                        join ca in applicationContext.ChildPersons on c.ChildId equals ca.ChildId
+                        where ca.PersonId == currentUser.PersonId
+                        select c;
+
+            var children = await query.ToListAsync(cancellationToken);
+
+            return children;
         }
     }
 

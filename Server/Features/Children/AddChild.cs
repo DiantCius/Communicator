@@ -26,7 +26,7 @@ namespace Server.Features.Children
                 RuleFor(x => x.BirthDate).NotNull().NotEmpty();
             }
         }
-        public class Handler : IRequestHandler<Command, ChildrenResponse>
+        public class Handler : ChildList, IRequestHandler<Command, ChildrenResponse>
         {
             private readonly ApplicationContext _context;
             private readonly ICurrentUser _currentUser;
@@ -66,12 +66,14 @@ namespace Server.Features.Children
                     Child = newChild
                 };*/
 
-                var query = from c in _context.Children
+                /*var query = from c in _context.Children
                             join ca in _context.ChildPersons on c.ChildId equals ca.ChildId
                             where ca.PersonId == parent.PersonId
                             select c;
 
-                var children = await query.ToListAsync(cancellationToken);
+                var children = await query.ToListAsync(cancellationToken);*/
+
+                var children = await GetChildrenAsync(_context, parent, cancellationToken);
 
                 return new ChildrenResponse
                 {

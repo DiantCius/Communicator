@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Server.Domain;
+using Server.Features.Users;
 
 namespace Server.Features.Babysitters
 {

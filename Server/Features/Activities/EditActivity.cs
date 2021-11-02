@@ -40,10 +40,12 @@ namespace Server.Features.Activities
         public class Handler : ActivityList, IRequestHandler<Command, ActivityResponse>
         {
             private readonly ApplicationContext _context;
+            private readonly ICurrentUser _currentUser;
 
-            public Handler(ApplicationContext context)
+            public Handler(ApplicationContext context, ICurrentUser currentUser)
             {
                 _context = context;
+                _currentUser = currentUser;
             }
 
             public async Task<ActivityResponse> Handle(Command request, CancellationToken cancellationToken)
@@ -53,6 +55,13 @@ namespace Server.Features.Activities
                 if(activityToEdit == null)
                 {
                     throw new ApiException($"activity with: {request.ActivityId} not found ", HttpStatusCode.NotFound);
+                }
+
+                var currentUser = await _context.Persons.FirstAsync(x => x.Username == _currentUser.GetCurrentUsername(), cancellationToken);
+
+                if(activityToEdit.AuthorId != currentUser.PersonId)
+                {
+                    throw new ApiException("You are not the author", HttpStatusCode.BadRequest);
                 }
 
                 activityToEdit.Action = request.Action ?? activityToEdit.Action;
@@ -78,6 +87,7 @@ namespace Server.Features.Activities
                 };
 
             }
+
         }
 
     }

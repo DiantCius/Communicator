@@ -23,7 +23,7 @@ namespace Server.Features.Users
             public int ChildId { get; set; }
         }
 
-        public class QueryHandler : IRequestHandler<Query, QueryResponse>
+        public class QueryHandler : UserList, IRequestHandler<Query, QueryResponse>
         {
             private readonly ApplicationContext _context;
             private readonly IMapper _mapper;
@@ -37,7 +37,7 @@ namespace Server.Features.Users
             public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
             {
                 //returns users that are not babysitting child with specific id
-                var query = from pe in _context.Persons
+                /*var query = from pe in _context.Persons
                             where !(from p in _context.Persons
                                    join cp in _context.ChildPersons on p.PersonId equals cp.PersonId
                                    where cp.ChildId == request.ChildId
@@ -48,7 +48,10 @@ namespace Server.Features.Users
 
                 //var persons = await _context.Persons.OrderBy(x => x.Email).AsNoTracking().ToListAsync(cancellationToken);
 
-                var userList = _mapper.Map<List<Person>, List<User>>(persons);
+                var userList = _mapper.Map<List<Person>, List<User>>(persons);*/
+
+                var userList = await GetUsersAsync(_context, cancellationToken, request.ChildId, _mapper);
+
 
                 return new QueryResponse
                 {
@@ -56,6 +59,23 @@ namespace Server.Features.Users
                     Count = userList.Count()
                 };
             }
+
+        }
+
+        protected async Task<List<User>> GetUsersAsync(ApplicationContext applicationContext, CancellationToken cancellationToken, int childId, IMapper mapper)
+        {
+            var query = from pe in applicationContext.Persons
+                        where !(from p in applicationContext.Persons
+                                join cp in applicationContext.ChildPersons on p.PersonId equals cp.PersonId
+                                where cp.ChildId == childId
+                                select p.PersonId).Contains(pe.PersonId)
+                        select pe;
+
+            var persons = await query.ToListAsync(cancellationToken);
+
+            var userList = mapper.Map<List<Person>, List<User>>(persons);
+
+            return userList;
         }
     }
 

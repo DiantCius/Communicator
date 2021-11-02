@@ -84,7 +84,7 @@ namespace Server.Features.Activities
 
             
         }
-        public async Task<List<Activity>> GetActivitiesAsync(ApplicationContext applicationContext, CancellationToken cancellationToken, int childId)
+        protected async Task<List<Activity>> GetActivitiesAsync(ApplicationContext applicationContext, CancellationToken cancellationToken, int childId)
         {
             var activities = await applicationContext.Activities.OrderBy(x => x.ActivityId).AsNoTracking().ToListAsync(cancellationToken);
             var activityList = activities.Where(x => x.ChildId == childId).ToList();
