@@ -26,9 +26,15 @@ namespace Server.Features.Babysitters
         }
 
         [HttpGet]
-        public Task<QueryResponse> Get(int id, CancellationToken cancellationToken)
+        public Task<BabysitterResponse> Get(int id, CancellationToken cancellationToken)
         {
             return _mediator.Send(new BabysitterList.Query(id), cancellationToken);
+        }
+
+        [HttpDelete("delete")]
+        public Task<BabysitterResponse> Delete(string babysitterUsername, int childId, CancellationToken cancellationToken)
+        {
+            return _mediator.Send(new DeleteBabysitter.Command(babysitterUsername, childId), cancellationToken);
         }
 
     }

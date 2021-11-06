@@ -13,7 +13,7 @@ namespace Server.Features.Babysitters
 {
     public class BabysitterList
     {
-        public class Query : IRequest<QueryResponse>
+        public class Query : IRequest<BabysitterResponse>
         {
             public int ChildId { get; set; }
             public Query(int id)
@@ -22,7 +22,7 @@ namespace Server.Features.Babysitters
             }
         }
 
-        public class QueryHandler : IRequestHandler<Query, QueryResponse>
+        public class QueryHandler : BabysitterList, IRequestHandler<Query, BabysitterResponse>
         {
             private readonly ApplicationContext _context;
             private readonly IMapper _mapper;
@@ -33,28 +33,39 @@ namespace Server.Features.Babysitters
                 _mapper = mapper;
             }
 
-            public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<BabysitterResponse> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query = from p in _context.Persons
+                /*var query = from p in _context.Persons
                             join cp in _context.ChildPersons on p.PersonId equals cp.PersonId
                             where cp.ChildId == request.ChildId
                             select p;
 
                 var babysitters = await query.ToListAsync(cancellationToken);
 
-                var babysitterList = _mapper.Map<List<Person>, List<Babysitter>>(babysitters);
+                var babysitterList = _mapper.Map<List<Person>, List<Babysitter>>(babysitters);*/
 
-                return new QueryResponse
+                var babysitterList = await GetBabysittersAsync(_context, request.ChildId, cancellationToken, _mapper);
+
+                return new BabysitterResponse
                 {
                     Babysitters = babysitterList,
-                    Count = babysitters.Count()
+                    Count = babysitterList.Count()
                 };
             }
+
         }
-    }
-    public class QueryResponse
-    {
-        public List<Babysitter> Babysitters { get; set; }
-        public int Count { get; set; }
+        protected async Task<List<Babysitter>> GetBabysittersAsync(ApplicationContext applicationContext, int childId, CancellationToken cancellationToken, IMapper mapper)
+        {
+            var query = from p in applicationContext.Persons
+                        join cp in applicationContext.ChildPersons on p.PersonId equals cp.PersonId
+                        where cp.ChildId == childId
+                        select p;
+
+            var babysitters = await query.ToListAsync(cancellationToken);
+
+            var babysitterList = mapper.Map<List<Person>, List<Babysitter>>(babysitters);
+
+            return babysitterList;
+        }
     }
 }

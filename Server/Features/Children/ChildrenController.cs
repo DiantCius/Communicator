@@ -30,5 +30,11 @@ namespace Server.Features.Children
         {
             return _mediator.Send(new ChildList.Query(), cancellationToken);
         }
+
+        [HttpDelete("delete")]
+        public Task<ChildrenResponse> Delete(int childId, CancellationToken cancellationToken)
+        {
+            return _mediator.Send(new DeleteChild.Command(childId), cancellationToken);
+        }
     }
 }
