@@ -22,7 +22,7 @@ namespace Server.Infrastructure.Filters
                     error+= valuePair.Value.Errors.Select(x => x.ErrorMessage).Aggregate((a, b) => a + b) + " ";
                 }
 
-                string content = JsonSerializer.Serialize(new { error });
+                string content = JsonSerializer.Serialize(new { error }); // za kazdym razem nowy error
                 result.Content = content;
                 result.ContentType = "application/json";
 
