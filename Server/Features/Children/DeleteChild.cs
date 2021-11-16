@@ -54,7 +54,7 @@ namespace Server.Features.Children
 
                 if(childToDelete.ParentId != currentUser.PersonId)
                 {
-                    throw new ApiException("You are not the parent", HttpStatusCode.BadRequest);
+                    throw new ApiException("You cant add children", HttpStatusCode.BadRequest);
                 }
 
                 _context.Children.Remove(childToDelete);

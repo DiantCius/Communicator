@@ -61,7 +61,7 @@ namespace Server.Features.Babysitters
 
                 if (child.ParentId != currentUser.PersonId)
                 {
-                    throw new ApiException("You are not the parent", HttpStatusCode.BadRequest);
+                    throw new ApiException("You can't delete this babysitter", HttpStatusCode.BadRequest);
                 }
 
                 var personToDelete = await _context.Persons.FirstAsync(x => x.Username == request.BabysitterUsername, cancellationToken);
@@ -69,7 +69,7 @@ namespace Server.Features.Babysitters
 
                 if(currentUser.PersonId == babysitterId)
                 {
-                    throw new ApiException("Parents cant delete themselves", HttpStatusCode.BadRequest);
+                    throw new ApiException("You can't delete yourself", HttpStatusCode.BadRequest);
                 }
 
                 var babysitterToDelete = await _context.ChildPersons.FirstAsync(x => x.PersonId == babysitterId && x.ChildId == request.ChildId, cancellationToken);

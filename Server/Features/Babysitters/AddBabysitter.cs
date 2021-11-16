@@ -60,7 +60,7 @@ namespace Server.Features.Babysitters
                 
                 if(currentUser.PersonId != child.ParentId)
                 {
-                    throw new ApiException("only parents can add babysitters", HttpStatusCode.BadRequest);
+                    throw new ApiException("you can't add babysitter", HttpStatusCode.BadRequest);
                 }
 
                 var person = await _context.Persons.FirstAsync(x => x.Email == request.PersonEmail, cancellationToken);
