@@ -31,6 +31,8 @@ namespace Server.Features.Children
             public async Task<ChildrenResponse> Handle(Query request, CancellationToken cancellationToken)
             {
 
+                //dupa
+
                 var currentUserUsername = _currentUser.GetCurrentUsername();
                 var currentUser = await _context.Persons.FirstAsync(x => x.Username == currentUserUsername, cancellationToken);
 
