@@ -28,7 +28,7 @@ namespace Server.Features.Users
             private readonly ApplicationContext _context;
             private readonly IMapper _mapper;
 
-            public QueryHandler(ApplicationContext context, ICurrentUser currentUser, IMapper mapper)
+            public QueryHandler(ApplicationContext context, IMapper mapper)
             {
                 _context = context;
                 _mapper = mapper;
@@ -36,22 +36,7 @@ namespace Server.Features.Users
 
             public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
             {
-                //returns users that are not babysitting child with specific id
-                /*var query = from pe in _context.Persons
-                            where !(from p in _context.Persons
-                                   join cp in _context.ChildPersons on p.PersonId equals cp.PersonId
-                                   where cp.ChildId == request.ChildId
-                                   select p.PersonId).Contains(pe.PersonId)
-                            select pe;
-
-                var persons = await query.ToListAsync(cancellationToken);
-
-                //var persons = await _context.Persons.OrderBy(x => x.Email).AsNoTracking().ToListAsync(cancellationToken);
-
-                var userList = _mapper.Map<List<Person>, List<User>>(persons);*/
-
                 var userList = await GetUsersAsync(_context, cancellationToken, request.ChildId, _mapper);
-
 
                 return new QueryResponse
                 {

@@ -1,8 +1,9 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
 using System.Threading.Tasks;
-
 
 namespace Server.Features.Users
 {
@@ -33,6 +34,13 @@ namespace Server.Features.Users
         public Task<QueryResponse> Get(int id, CancellationToken cancellationToken)
         {
             return _mediator.Send(new UserList.Query(id), cancellationToken);
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("{id:int}")]
+        public Task<GetUserResponse> GetById(int id, CancellationToken cancellationToken)
+        {
+            return _mediator.Send(new GetUser.Query(id), cancellationToken);
         }
 
     }

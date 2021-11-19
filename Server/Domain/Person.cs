@@ -12,6 +12,7 @@ namespace Server.Domain
         public int PersonId { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }
+        public bool IsInvited { get; set; } = false;
         [JsonIgnore]
         public string HashedPassword { get; set; }
         [JsonIgnore]

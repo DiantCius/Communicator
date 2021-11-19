@@ -14,6 +14,7 @@ namespace Server.Infrastructure
         public DbSet<Child> Children { get; set; }
         public DbSet<Activity> Activities { get; set; }
         public DbSet<ChildPerson> ChildPersons { get; set; }
+        public DbSet<Invitation> Invitations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
