@@ -67,6 +67,11 @@ namespace Server.Features.Invitations
                     throw new ApiException("user not found", HttpStatusCode.NotFound);
                 }
 
+                if(person.InvitedBy == currentUser.Email)
+                {
+                    throw new ApiException("already invited", HttpStatusCode.BadRequest);
+                }
+
                 var invitation = new Invitation()
                 {
                     AddressedUserId = person.PersonId,
@@ -76,7 +81,7 @@ namespace Server.Features.Invitations
 
                 await _context.Invitations.AddAsync(invitation, cancellationToken);
 
-                person.IsInvited = true;
+                person.InvitedBy = currentUser.Email;
 
                 await _context.SaveChangesAsync(cancellationToken);
 

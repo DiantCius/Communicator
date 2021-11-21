@@ -10,7 +10,7 @@ namespace Server.Features.Users
     {
         public string Username { get; set; }
         public string Email { get; set; }
-        public bool IsInvited { get; set; } = false;
+        public string InvitedBy  { get; set; }
         public string Token { get; set; }
 
     }

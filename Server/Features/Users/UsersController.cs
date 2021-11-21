@@ -36,12 +36,5 @@ namespace Server.Features.Users
             return _mediator.Send(new UserList.Query(id), cancellationToken);
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpGet("{id:int}")]
-        public Task<GetUserResponse> GetById(int id, CancellationToken cancellationToken)
-        {
-            return _mediator.Send(new GetUser.Query(id), cancellationToken);
-        }
-
     }
 }

@@ -80,6 +80,9 @@ namespace Server.Features.Babysitters
                 }
 
                 _context.ChildPersons.Remove(babysitterToDelete);
+
+                personToDelete.InvitedBy = null;
+
                 await _context.SaveChangesAsync(cancellationToken);
 
                 var babysitterList = await GetBabysittersAsync(_context, request.ChildId, cancellationToken, _mapper);
