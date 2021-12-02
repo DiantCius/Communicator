@@ -39,42 +39,6 @@ namespace Server.Features.Activities
                 _currentUser = currentUser;
             }
 
-            /*public async Task<AddActivityResponse> Handle(Command request, CancellationToken cancellationToken)
-            {
-                var child = await _context.Children.FirstAsync(x => x.ChildId == request.ChildId, cancellationToken);
-
-                if (child == null)
-                {
-                    throw new ApiException($"child with {request.ChildId} not found", HttpStatusCode.Unauthorized);
-                }
-
-                var activityAuthor = await _context.Persons.FirstAsync(x => x.Username == _currentUser.GetCurrentUsername(), cancellationToken);
-
-                var babysitter = await _context.ChildPersons.FirstOrDefaultAsync(x => x.ChildId == request.ChildId && x.PersonId == activityAuthor.PersonId);
-
-                if (babysitter == null)
-                {
-                    throw new ApiException("only babysitters can add activities to children", HttpStatusCode.Unauthorized);
-                }
-
-                var newActivity = new Activity()
-                {
-                    Action = request.Action,
-                    PostTime = DateTime.UtcNow,
-                    Author = activityAuthor,
-                    Child = child,
-                };
-
-                await _context.Activities.AddAsync(newActivity, cancellationToken);
-
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return new AddActivityResponse
-                {
-                    Activity = newActivity
-                };
-            }*/
-
             public async Task<ActivityResponse> Handle(Command request, CancellationToken cancellationToken)
             {
                 var child = await _context.Children.FirstAsync(x => x.ChildId == request.ChildId, cancellationToken);
@@ -105,16 +69,6 @@ namespace Server.Features.Activities
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                /*var activities = await _context.Activities.OrderBy(x => x.ActivityId).AsNoTracking().ToListAsync(cancellationToken);
-                var activityList = activities.Where(x => x.ChildId == request.ChildId).ToList();
-
-                var authorList = await _context.Persons.ToListAsync(cancellationToken);
-
-                foreach (Activity activity in activityList)
-                {
-                    activity.Author = authorList.Find(x => x.PersonId == activity.AuthorId);
-                }*/
-
                 var activityList = await GetActivitiesAsync(_context, cancellationToken, request.ChildId);
 
                 return new ActivityResponse
@@ -126,9 +80,5 @@ namespace Server.Features.Activities
             }
         }
     }
-    /*public class AddActivityResponse 
-    {
-        public Activity Activity { get; set; }
-    }*/
 
 }

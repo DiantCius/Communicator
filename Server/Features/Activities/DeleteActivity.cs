@@ -55,16 +55,6 @@ namespace Server.Features.Activities
                 _context.Activities.Remove(activityToDelete);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                /*var activities = await _context.Activities.OrderBy(x => x.ActivityId).AsNoTracking().ToListAsync(cancellationToken); // mozna do funkcji potem wyodrebnic
-                var activityList = activities.Where(x => x.ChildId == request.ChildId).ToList();
-
-                var authorList = await _context.Persons.ToListAsync(cancellationToken);
-
-                foreach (Activity activity in activityList)
-                {
-                    activity.Author = authorList.Find(x => x.PersonId == activity.AuthorId);
-                }*/
-
                 var activityList = await GetActivitiesAsync(_context, cancellationToken, request.ChildId);
 
                 return new ActivityResponse

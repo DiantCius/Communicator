@@ -35,15 +35,6 @@ namespace Server.Features.Babysitters
 
             public async Task<BabysitterResponse> Handle(Query request, CancellationToken cancellationToken)
             {
-                /*var query = from p in _context.Persons
-                            join cp in _context.ChildPersons on p.PersonId equals cp.PersonId
-                            where cp.ChildId == request.ChildId
-                            select p;
-
-                var babysitters = await query.ToListAsync(cancellationToken);
-
-                var babysitterList = _mapper.Map<List<Person>, List<Babysitter>>(babysitters);*/
-
                 var babysitterList = await GetBabysittersAsync(_context, request.ChildId, cancellationToken, _mapper);
 
                 return new BabysitterResponse

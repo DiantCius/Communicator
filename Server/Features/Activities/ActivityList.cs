@@ -63,16 +63,6 @@ namespace Server.Features.Activities
                     throw new ApiException("only babysitters can view children activities", HttpStatusCode.Unauthorized);
                 }
 
-                /*var activities = await _context.Activities.OrderBy(x => x.ActivityId).AsNoTracking().ToListAsync(cancellationToken);
-                var activityList = activities.Where(x => x.ChildId == request.ChildId).ToList();
-
-                var authorList = await _context.Persons.ToListAsync(cancellationToken);
-
-                foreach(Activity activity in activityList)
-                {
-                    activity.Author = authorList.Find(x => x.PersonId == activity.AuthorId);
-                }*/
-
                 var activityList = await GetActivitiesAsync(_context, cancellationToken, request.ChildId);
 
                 return new ActivityResponse
@@ -86,7 +76,10 @@ namespace Server.Features.Activities
         }
         protected async Task<List<Activity>> GetActivitiesAsync(ApplicationContext applicationContext, CancellationToken cancellationToken, int childId)
         {
-            var activities = await applicationContext.Activities.OrderBy(x => x.ActivityId).AsNoTracking().ToListAsync(cancellationToken);
+            var childActivities = await applicationContext.Children.Include(x => x.Activities).FirstOrDefaultAsync(x => x.ChildId == childId, cancellationToken);
+            var activities = childActivities.Activities.OrderBy(x=>x.ActivityId).ToList();
+
+            /*var activities = await applicationContext.Activities.OrderBy(x => x.ActivityId).AsNoTracking().ToListAsync(cancellationToken);
             var activityList = activities.Where(x => x.ChildId == childId).ToList();
 
             var authorList = await applicationContext.Persons.ToListAsync(cancellationToken);
@@ -94,16 +87,10 @@ namespace Server.Features.Activities
             foreach (Activity activity in activityList)
             {
                 activity.Author = authorList.Find(x => x.PersonId == activity.AuthorId);
-            }
+            }*/
 
-            return activityList;
+            return activities;
         }
 
     }
-
-    /*public class QueryResponse
-    {
-        public List<Activity> Activities { get; set; }
-        public int Count { get; set; }
-    }*/
 }

@@ -83,18 +83,6 @@ namespace Server.Features.Babysitters
 
                 // zwrocenie listy uzytkownikow ktorzy nie opiekuja sie dzieckiem
 
-                /*var query = from pe in _context.Persons
-                            where !(from p in _context.Persons
-                                    join cp in _context.ChildPersons on p.PersonId equals cp.PersonId
-                                    where cp.ChildId == request.ChildId
-                                    select p.PersonId).Contains(pe.PersonId)
-                            select pe;
-
-                var persons = await query.ToListAsync(cancellationToken);
-
-
-                var userList = _mapper.Map<List<Person>, List<User>>(persons);*/
-
                 var userList = await GetUsersAsync(_context, cancellationToken, request.ChildId, _mapper);
 
                 return new AddBabysitterResponse
@@ -103,20 +91,9 @@ namespace Server.Features.Babysitters
                     Count = userList.Count()
                 };
 
-                /*var babysitter = new Babysitter()
-                {
-                    Username = person.Username,
-                    Email = person.Email
-                };
-
-                return new AddBabysitterResponse { Babysitter = babysitter };*/
             }
         }
     }
-    /*public class AddBabysitterResponse
-    {
-        public Babysitter Babysitter { get; set; }
-    }*/
 
     public class AddBabysitterResponse
     {

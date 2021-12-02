@@ -34,13 +34,6 @@ namespace Server.Features.Children
                 var currentUserUsername = _currentUser.GetCurrentUsername();
                 var currentUser = await _context.Persons.FirstAsync(x => x.Username == currentUserUsername, cancellationToken);
 
-                /*var query = from c in _context.Children
-                            join ca in _context.ChildPersons on c.ChildId equals ca.ChildId
-                            where ca.PersonId == currentUser.PersonId
-                            select c;
-
-                var children = await query.ToListAsync(cancellationToken);*/
-
                 var children = await GetChildrenAsync(_context, currentUser, cancellationToken);
 
                 return new ChildrenResponse
@@ -65,9 +58,4 @@ namespace Server.Features.Children
         }
     }
 
-    /*public class QueryResponse
-    {
-        public List<Child> Children { get; set; }
-        public int Count { get; set; }
-    }*/
 }
