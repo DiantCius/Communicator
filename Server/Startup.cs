@@ -25,6 +25,7 @@ using FluentValidation.AspNetCore;
 using Server.Infrastructure.Errors;
 using Server.Infrastructure.Filters;
 using FluentValidation;
+using Server.Hubs;
 
 namespace Server
 {
@@ -95,6 +96,8 @@ namespace Server
                 }
             );*/
 
+            services.AddSignalR();
+
             services.AddControllers(opt =>
             {
                 opt.Filters.Add<ValidatorActionFilter>();
@@ -163,6 +166,7 @@ namespace Server
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chatHub");
             });
         }
     }
