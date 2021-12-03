@@ -15,6 +15,10 @@ namespace Server.Infrastructure
         public DbSet<Activity> Activities { get; set; }
         public DbSet<ChildPerson> ChildPersons { get; set; }
         public DbSet<Invitation> Invitations { get; set; }
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<ChatPerson> ChatPersons { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +33,19 @@ namespace Server.Infrastructure
             modelBuilder.Entity<ChildPerson>()
                 .HasOne(cp => cp.Person)
                 .WithMany(p => p.ChildPersons)
+                .HasForeignKey(cp => cp.PersonId);
+
+            modelBuilder.Entity<ChatPerson>()
+            .HasKey(cp => new { cp.ChatId, cp.PersonId });
+
+            modelBuilder.Entity<ChatPerson>()
+                .HasOne(cp => cp.Chat)
+                .WithMany(c => c.ChatPersons)
+                .HasForeignKey(cp => cp.ChatId);
+
+            modelBuilder.Entity<ChatPerson>()
+                .HasOne(cp => cp.Person)
+                .WithMany(p => p.ChatPersons)
                 .HasForeignKey(cp => cp.PersonId);
         }
     }

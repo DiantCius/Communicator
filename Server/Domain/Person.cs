@@ -17,6 +17,10 @@ namespace Server.Domain
         public string HashedPassword { get; set; }
         [JsonIgnore]
         public List<ChildPerson> ChildPersons { get; set; } = new List<ChildPerson>();
+        [JsonIgnore]
+        public List<ChatPerson> ChatPersons { get; set; } = new List<ChatPerson>();
+        [JsonIgnore]
+        public List<Message> Message { get; set; } = new List<Message>();
 
     }
 }

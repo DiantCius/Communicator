@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Infrastructure;
 
 namespace Server.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20211123101056_UpdateInvitationForRelation")]
+    partial class UpdateInvitationForRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,36 +47,6 @@ namespace Server.Migrations
                     b.HasIndex("ChildId");
 
                     b.ToTable("Activities");
-                });
-
-            modelBuilder.Entity("Server.Domain.Chat", b =>
-                {
-                    b.Property<int>("ChatId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ChatId");
-
-                    b.ToTable("Chats");
-                });
-
-            modelBuilder.Entity("Server.Domain.ChatPerson", b =>
-                {
-                    b.Property<int>("ChatId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PersonId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ChatId", "PersonId");
-
-                    b.HasIndex("PersonId");
-
-                    b.ToTable("ChatPersons");
                 });
 
             modelBuilder.Entity("Server.Domain.Child", b =>
@@ -138,34 +110,6 @@ namespace Server.Migrations
                     b.ToTable("Invitations");
                 });
 
-            modelBuilder.Entity("Server.Domain.Message", b =>
-                {
-                    b.Property<int>("MessageId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ChatId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PersonId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("WhenSent")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("MessageId");
-
-                    b.HasIndex("ChatId");
-
-                    b.HasIndex("PersonId");
-
-                    b.ToTable("Messages");
-                });
-
             modelBuilder.Entity("Server.Domain.Person", b =>
                 {
                     b.Property<int>("PersonId")
@@ -209,25 +153,6 @@ namespace Server.Migrations
                     b.Navigation("Child");
                 });
 
-            modelBuilder.Entity("Server.Domain.ChatPerson", b =>
-                {
-                    b.HasOne("Server.Domain.Chat", "Chat")
-                        .WithMany("ChatPersons")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Server.Domain.Person", "Person")
-                        .WithMany("ChatPersons")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Chat");
-
-                    b.Navigation("Person");
-                });
-
             modelBuilder.Entity("Server.Domain.ChildPerson", b =>
                 {
                     b.HasOne("Server.Domain.Child", "Child")
@@ -266,32 +191,6 @@ namespace Server.Migrations
                     b.Navigation("Child");
                 });
 
-            modelBuilder.Entity("Server.Domain.Message", b =>
-                {
-                    b.HasOne("Server.Domain.Chat", "Chat")
-                        .WithMany("Messages")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Server.Domain.Person", "Person")
-                        .WithMany("Message")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Chat");
-
-                    b.Navigation("Person");
-                });
-
-            modelBuilder.Entity("Server.Domain.Chat", b =>
-                {
-                    b.Navigation("ChatPersons");
-
-                    b.Navigation("Messages");
-                });
-
             modelBuilder.Entity("Server.Domain.Child", b =>
                 {
                     b.Navigation("Activities");
@@ -301,11 +200,7 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Server.Domain.Person", b =>
                 {
-                    b.Navigation("ChatPersons");
-
                     b.Navigation("ChildPersons");
-
-                    b.Navigation("Message");
                 });
 #pragma warning restore 612, 618
         }

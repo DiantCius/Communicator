@@ -1,9 +1,8 @@
-﻿using AutoMapper;
+﻿
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Server.Domain;
 using Server.Infrastructure;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
