@@ -37,9 +37,9 @@ namespace Server.Features.Invitations
         public class Handler : InvitationList, IRequestHandler<Command, DeclineInvitationResponse>
         {
             private readonly ApplicationContext _context;
-            private readonly ICurrentUser _currentUser;
+            private readonly CurrentUser _currentUser;
 
-            public Handler(ApplicationContext context, ICurrentUser currentUser)
+            public Handler(ApplicationContext context, CurrentUser currentUser)
             {
                 _context = context;
                 _currentUser = currentUser;

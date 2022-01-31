@@ -34,12 +34,12 @@ namespace Server.Infrastructure.Errors
 
         private async Task HandleException(HttpContext context, Exception ex)
         {
-            string result = null;
+            string error = null;
             switch(ex)
             {
                 case ApiException ae:
                     context.Response.StatusCode = (int)ae.StatusCode;
-                    result = JsonSerializer.Serialize(
+                    error = JsonSerializer.Serialize(
                         new
                         {
                             error = ae.ErrorMessage
@@ -47,7 +47,7 @@ namespace Server.Infrastructure.Errors
                     break;
                 case Exception e:
                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    result = JsonSerializer.Serialize(
+                    error = JsonSerializer.Serialize(
                         new
                         {
                             error = "unexpected error"
@@ -55,7 +55,7 @@ namespace Server.Infrastructure.Errors
                     break;
             }
             context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(result);
+            await context.Response.WriteAsync(error);
         }
 
     }

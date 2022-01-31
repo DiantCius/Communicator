@@ -31,10 +31,28 @@ namespace Server.Features.Users
         }
 
         [HttpGet]
-        public Task<QueryResponse> Get(int id, CancellationToken cancellationToken)
+        public Task<QueryResponse> GetUsers(int id, CancellationToken cancellationToken)
         {
             return _mediator.Send(new UserList.Query(id), cancellationToken);
         }
 
+        [HttpGet("details")]
+        public Task<GetUserResponse> GetUser(int id, CancellationToken cancellationToken)
+        {
+            return _mediator.Send(new GetUser.Query(id), cancellationToken);
+        }
+
+        [HttpGet("user")]
+        public Task<CurrentUserResponse> GetCurrentUser(CancellationToken cancellationToken)
+        {
+            return _mediator.Send(new CurrentUserDetails.Query(), cancellationToken);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("password")]
+        public Task<ChangePasswordResponse> ChangePassword(ChangePassword.Command command, CancellationToken cancellationToken)
+        {
+            return _mediator.Send(command, cancellationToken);
+        }
     }
 }

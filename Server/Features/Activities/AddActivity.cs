@@ -18,6 +18,7 @@ namespace Server.Features.Activities
         public class Command : IRequest<ActivityResponse>
         {
             public string Action { get; set; }
+            public string Notes { get; set; }
             public int ChildId { get; set; }
         }
         public class CommandValidator : AbstractValidator<Command>
@@ -31,9 +32,9 @@ namespace Server.Features.Activities
         public class Handler : ActivityList, IRequestHandler<Command, ActivityResponse>
         {
             private readonly ApplicationContext _context;
-            private readonly ICurrentUser _currentUser;
+            private readonly CurrentUser _currentUser;
 
-            public Handler(ApplicationContext context, ICurrentUser currentUser)
+            public Handler(ApplicationContext context, CurrentUser currentUser)
             {
                 _context = context;
                 _currentUser = currentUser;
@@ -60,6 +61,7 @@ namespace Server.Features.Activities
                 var newActivity = new Activity()
                 {
                     Action = request.Action,
+                    Notes = request.Notes,
                     PostTime = DateTime.UtcNow,
                     Author = activityAuthor,
                     Child = child,

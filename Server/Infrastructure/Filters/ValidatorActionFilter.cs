@@ -14,20 +14,20 @@ namespace Server.Infrastructure.Filters
         {
             if (!context.ModelState.IsValid)
             {
-                var result = new ContentResult();
+                var validationResult = new ContentResult();
                 string error = null;
 
                 foreach (var valuePair in context.ModelState)
                 {
-                    error+= valuePair.Value.Errors.Select(x => x.ErrorMessage).Aggregate((a, b) => a + b) + " ";
+                    error += valuePair.Value.Errors.Select(x => x.ErrorMessage).Aggregate((a, b) => a + b) + " ";
                 }
 
-                string content = JsonSerializer.Serialize(new { error }); // za kazdym razem nowy error
-                result.Content = content;
-                result.ContentType = "application/json";
+                string content = JsonSerializer.Serialize(new { error }); 
+                validationResult.Content = content;
+                validationResult.ContentType = "application/json";
 
                 context.HttpContext.Response.StatusCode = 422; 
-                context.Result = result;
+                context.Result = validationResult;
                 return;
             }
 

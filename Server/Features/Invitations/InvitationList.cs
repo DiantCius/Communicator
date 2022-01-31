@@ -20,9 +20,9 @@ namespace Server.Features.Invitations
         public class QueryHandler : InvitationList, IRequestHandler<Query, QueryResponse>
         {
             private readonly ApplicationContext _context;
-            private readonly ICurrentUser _currentUser;
+            private readonly CurrentUser _currentUser;
 
-            public QueryHandler(ApplicationContext context, ICurrentUser currentUser)
+            public QueryHandler(ApplicationContext context, CurrentUser currentUser)
             {
                 _context = context;
                 _currentUser = currentUser;
@@ -55,7 +55,7 @@ namespace Server.Features.Invitations
             }
         }
 
-        protected async Task<List<InviteDetails>>GetInviteDetailsAsync(ICurrentUser _currentUser, ApplicationContext applicationContext, CancellationToken cancellationToken)
+        protected async Task<List<InviteDetails>>GetInviteDetailsAsync(CurrentUser _currentUser, ApplicationContext applicationContext, CancellationToken cancellationToken)
         {
             var currentUserUsername = _currentUser.GetCurrentUsername();
             var currentUser = await applicationContext.Persons.FirstAsync(x => x.Username == currentUserUsername, cancellationToken);

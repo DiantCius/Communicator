@@ -59,12 +59,6 @@ namespace Server.Features.Users
                     throw new ApiException("Invalid email/password", HttpStatusCode.BadRequest);
                 }
                 var token =_jwtService.GenerateToken(person.Username);
-                /*var user = new User
-                {
-                    Email = person.Email,
-                    Username = person.Username,
-                    Token = token
-                };*/
                 var user = _mapper.Map<Person, User>(person);
                 user.Token = token;
 

@@ -19,9 +19,9 @@ namespace Server.Features.Children
         public class QueryHandler : ChildList, IRequestHandler<Query, ChildrenResponse>
         {
             private readonly ApplicationContext _context;
-            private readonly ICurrentUser _currentUser;
+            private readonly CurrentUser _currentUser;
 
-            public QueryHandler(ApplicationContext context, ICurrentUser currentUser)
+            public QueryHandler(ApplicationContext context, CurrentUser currentUser)
             {
                 _context = context;
                 _currentUser = currentUser;

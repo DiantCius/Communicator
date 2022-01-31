@@ -16,11 +16,11 @@ namespace Server.Domain
         [JsonIgnore]
         public string HashedPassword { get; set; }
         [JsonIgnore]
-        public List<ChildPerson> ChildPersons { get; set; } = new List<ChildPerson>();
+        public List<ChildPerson> ChildPersons { get; set; } 
         [JsonIgnore]
-        public List<ChatPerson> ChatPersons { get; set; } = new List<ChatPerson>();
+        public List<ChatPerson> ChatPersons { get; set; } 
         [JsonIgnore]
-        public List<Message> Message { get; set; } = new List<Message>();
+        public List<Message> Message { get; set; }
 
     }
 }

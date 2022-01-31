@@ -26,6 +26,7 @@ namespace Server.Features.Activities
             public int ActivityId { get; set; }
             public int ChildId { get; set; }
             public string Action { get; set; }
+            public string Notes { get; set; }
         }
         public class CommandValidator : AbstractValidator<Command>
         {
@@ -40,9 +41,9 @@ namespace Server.Features.Activities
         public class Handler : ActivityList, IRequestHandler<Command, ActivityResponse>
         {
             private readonly ApplicationContext _context;
-            private readonly ICurrentUser _currentUser;
+            private readonly CurrentUser _currentUser;
 
-            public Handler(ApplicationContext context, ICurrentUser currentUser)
+            public Handler(ApplicationContext context, CurrentUser currentUser)
             {
                 _context = context;
                 _currentUser = currentUser;
@@ -65,6 +66,7 @@ namespace Server.Features.Activities
                 }
 
                 activityToEdit.Action = request.Action ?? activityToEdit.Action;
+                activityToEdit.Notes = request.Notes ?? activityToEdit.Notes;
 
                 await _context.SaveChangesAsync(cancellationToken);
 

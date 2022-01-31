@@ -38,9 +38,9 @@ namespace Server.Features.Invitations
         public class Handler : InvitationList, IRequestHandler<Command, AcceptInvitationResponse>
         {
             private readonly ApplicationContext _context;
-            private readonly ICurrentUser _currentUser;
+            private readonly CurrentUser _currentUser;
 
-            public Handler(ApplicationContext context, ICurrentUser currentUser)
+            public Handler(ApplicationContext context, CurrentUser currentUser)
             {
                 _context = context;
                 _currentUser = currentUser;
@@ -65,6 +65,7 @@ namespace Server.Features.Invitations
                 var currentUserUsername = _currentUser.GetCurrentUsername();
                 var currentUser = await _context.Persons.FirstAsync(x => x.Username == currentUserUsername, cancellationToken);
 
+                currentUser.InvitedBy = null;
 
                 var childPerson = new ChildPerson()
                 {
@@ -74,11 +75,18 @@ namespace Server.Features.Invitations
                     Person = currentUser
                 };
 
-
                 _context.Invitations.Remove(invitation);
 
                 await _context.ChildPersons.AddAsync(childPerson, cancellationToken);
-                await _context.SaveChangesAsync(cancellationToken);
+
+                try
+                {
+                    await _context.SaveChangesAsync(cancellationToken);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e);
+                }
 
 
                 var invitations = await GetInviteDetailsAsync(_currentUser, _context, cancellationToken);

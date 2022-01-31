@@ -9,7 +9,6 @@ namespace Server.Infrastructure
             : base(options)
         {       
         }
-
         public DbSet<Person> Persons { get; set; }
         public DbSet<Child> Children { get; set; }
         public DbSet<Activity> Activities { get; set; }
@@ -18,7 +17,6 @@ namespace Server.Infrastructure
         public DbSet<Message> Messages { get; set; }
         public DbSet<Chat> Chats { get; set; }
         public DbSet<ChatPerson> ChatPersons { get; set; }
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,7 +34,7 @@ namespace Server.Infrastructure
                 .HasForeignKey(cp => cp.PersonId);
 
             modelBuilder.Entity<ChatPerson>()
-            .HasKey(cp => new { cp.ChatId, cp.PersonId });
+                .HasKey(cp => new { cp.ChatId, cp.PersonId });
 
             modelBuilder.Entity<ChatPerson>()
                 .HasOne(cp => cp.Chat)

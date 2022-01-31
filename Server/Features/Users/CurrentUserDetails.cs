@@ -18,9 +18,9 @@ namespace Server.Features.Users
         {
             private readonly ApplicationContext _context;
             private readonly IMapper _mapper;
-            private readonly ICurrentUser _currentUser;
+            private readonly CurrentUser _currentUser;
 
-            public QueryHandler(ApplicationContext context, IMapper mapper, ICurrentUser currentUser)
+            public QueryHandler(ApplicationContext context, IMapper mapper, CurrentUser currentUser)
             {
                 _context = context;
                 _mapper = mapper;

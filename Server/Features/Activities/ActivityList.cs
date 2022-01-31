@@ -18,7 +18,6 @@ namespace Server.Features.Activities
         public class Query : IRequest<ActivityResponse>
         {
             public int ChildId { get; set; }
-
             public Query(int id)
             {
                 ChildId = id;
@@ -29,16 +28,18 @@ namespace Server.Features.Activities
         {
             public QueryValidator()
             {
-                RuleFor(x => x.ChildId).NotNull().NotEmpty();
+                RuleFor(x => x.ChildId)
+                    .NotNull()
+                    .NotEmpty();
             }
         }
 
         public class QueryHandler : ActivityList, IRequestHandler<Query, ActivityResponse>
         {
             private readonly ApplicationContext _context;
-            private readonly ICurrentUser _currentUser;
+            private readonly CurrentUser _currentUser;
 
-            public QueryHandler(ApplicationContext context, ICurrentUser currentUser)
+            public QueryHandler(ApplicationContext context, CurrentUser currentUser)
             {
                 _context = context;
                 _currentUser = currentUser;
@@ -46,7 +47,8 @@ namespace Server.Features.Activities
 
             public async Task<ActivityResponse> Handle(Query request, CancellationToken cancellationToken)
             {
-                var child = await _context.Children.FirstAsync(x => x.ChildId == request.ChildId, cancellationToken);
+                var child = await _context.Children
+                    .FirstAsync(x => x.ChildId == request.ChildId, cancellationToken);
 
                 if (child == null)
                 {
@@ -54,9 +56,11 @@ namespace Server.Features.Activities
                 }
 
                 var currentUserUsername = _currentUser.GetCurrentUsername();
-                var currentUser = await _context.Persons.FirstAsync(x => x.Username == currentUserUsername, cancellationToken);
+                var currentUser = await _context.Persons
+                    .FirstAsync(x => x.Username == currentUserUsername, cancellationToken);
 
-                var babysitter = await _context.ChildPersons.FirstOrDefaultAsync(x => x.ChildId == request.ChildId && x.PersonId == currentUser.PersonId, cancellationToken);
+                var babysitter = await _context.ChildPersons
+                    .FirstOrDefaultAsync(x => x.ChildId == request.ChildId && x.PersonId == currentUser.PersonId, cancellationToken);
 
                 if (babysitter == null)
                 {
@@ -71,23 +75,23 @@ namespace Server.Features.Activities
                     Count = activityList.Count(),
                 };
             }
-
-            
         }
-        protected async Task<List<Activity>> GetActivitiesAsync(ApplicationContext applicationContext, CancellationToken cancellationToken, int childId)
+        protected async Task<List<Activity>> GetActivitiesAsync
+            (ApplicationContext applicationContext, CancellationToken cancellationToken, int childId)
         {
-            var childActivities = await applicationContext.Children.Include(x => x.Activities).FirstOrDefaultAsync(x => x.ChildId == childId, cancellationToken);
-            var activities = childActivities.Activities.OrderBy(x=>x.ActivityId).ToList();
+            var activities = await applicationContext.Activities
+                .Where(x=> x.ChildId == childId)
+                .OrderBy(x => x.ActivityId)
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
 
-            /*var activities = await applicationContext.Activities.OrderBy(x => x.ActivityId).AsNoTracking().ToListAsync(cancellationToken);
-            var activityList = activities.Where(x => x.ChildId == childId).ToList();
+            var authorList = await applicationContext.Persons//.Include(x=> x.ChildPersons.Where(x=> x.ChildId == childId))
+                .ToListAsync(cancellationToken);
 
-            var authorList = await applicationContext.Persons.ToListAsync(cancellationToken);
-
-            foreach (Activity activity in activityList)
+            foreach (Activity activity in activities)
             {
                 activity.Author = authorList.Find(x => x.PersonId == activity.AuthorId);
-            }*/
+            }
 
             return activities;
         }

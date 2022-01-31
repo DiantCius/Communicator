@@ -38,10 +38,10 @@ namespace Server.Features.Babysitters
         public class Handler : BabysitterList, IRequestHandler<Command, BabysitterResponse>
         {
             private readonly ApplicationContext _context;
-            private readonly ICurrentUser _currentUser;
+            private readonly CurrentUser _currentUser;
             private readonly IMapper _mapper;
 
-            public Handler(ApplicationContext context, ICurrentUser currentUser, IMapper mapper)
+            public Handler(ApplicationContext context, CurrentUser currentUser, IMapper mapper)
             {
                 _context = context;
                 _currentUser = currentUser;

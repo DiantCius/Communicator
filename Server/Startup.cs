@@ -26,35 +26,31 @@ using Server.Infrastructure.Errors;
 using Server.Infrastructure.Filters;
 using FluentValidation;
 using Server.Hubs;
+using Server.Features.Chats;
+using System.Net.Mail;
+using System.Net;
 
 namespace Server
 {
     public class Startup
     {
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ApplicationContext>(options => 
+                options.UseSqlServer(Configuration.GetConnectionString("Default")));
+
             services.AddMediatR(Assembly.GetExecutingAssembly());
 
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("mysecretkeythatshouldbelong123456dgsgdsfshg"));
+            var issuer = "Issuer";
+            var audience = "Audience";
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("mysecretkey12345qwerteyurfgdfghfdfdsg"));
             var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
-            var issuer = "issuer";
-            var audience = "audience";
-
-            /*services.Configure<JwtOptions>(options =>
-            {
-                options.Audience = audience;
-                options.Issuer = issuer;
-                options.SigningCredentials = signingCredentials;
-            });*/
 
             var jwtOptions = new JwtOptions()
             {
@@ -85,30 +81,23 @@ namespace Server
 
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IPasswordHasher<Person>, PasswordHasher<Person>>();
-            services.AddScoped<ICurrentUser, CurrentUser>();
+            services.AddScoped<CurrentUser>();
+            services.AddScoped<ChatService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-            services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
-
-            /*services.AddControllers().AddFluentValidation(opt =>
-                {
-                    opt.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-                }
-            );*/
 
             services.AddSignalR();
 
             services.AddControllers(opt =>
             {
                 opt.Filters.Add<ValidatorActionFilter>();
-            })     
+            })
             .AddFluentValidation(cfg =>
             {
                 cfg.RegisterValidatorsFromAssemblyContaining<Startup>();
             }
             );
 
-            ValidatorOptions.Global.LanguageManager.Enabled = false; // errory w walidacji po angielsku
+            ValidatorOptions.Global.LanguageManager.Enabled = false; // 
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -117,30 +106,15 @@ namespace Server
 
             services.AddAutoMapper(typeof(Startup));
 
-            services.AddSwaggerGen(c =>
-            {
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    In = ParameterLocation.Header,
-                    Description = "Please insert JWT with Bearer into field",
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey,
-                    BearerFormat = "JWT"
-                });
+            string sender = Configuration.GetSection("Gmail")["Sender"];
+            string from = Configuration.GetSection("Mail")["From"];
+            string password = Configuration.GetSection("Gmail")["Password"];
+            int port = Convert.ToInt32(Configuration.GetSection("Gmail")["Port"]);
 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
-                {
-                    {   new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-                    },
-                    Array.Empty<string>()}
-                });
+            services
+                .AddFluentEmail(sender, from)
+                .AddMailGunSender("sandbox10a2eeb384574d7bb06e406628ff2b03.mailgun.org", "1e1d6f96aafb3280a6e0762197ef1b70-cac494aa-91241d22");
 
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Server", Version = "v1" });
-                c.CustomSchemaIds(d => d.FullName);
-
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -149,8 +123,6 @@ namespace Server
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Server v1"));
             }
 
             app.UseMiddleware<ErrorHandlingMiddleware>();

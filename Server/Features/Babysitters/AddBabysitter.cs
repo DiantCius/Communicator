@@ -36,10 +36,10 @@ namespace Server.Features.Babysitters
         public class Handler : UserList, IRequestHandler<Command, AddBabysitterResponse>
         {
             private readonly ApplicationContext _context;
-            private readonly ICurrentUser _currentUser;
+            private readonly CurrentUser _currentUser;
             private readonly IMapper _mapper;
 
-            public Handler(ApplicationContext context, ICurrentUser currentUser, IMapper mapper)
+            public Handler(ApplicationContext context, CurrentUser currentUser, IMapper mapper)
             {
                 _context = context;
                 _currentUser = currentUser;
@@ -48,7 +48,7 @@ namespace Server.Features.Babysitters
 
             public async Task<AddBabysitterResponse> Handle(Command request, CancellationToken cancellationToken)
             {
-                var child = await _context.Children.FirstAsync(x => x.ChildId == request.ChildId, cancellationToken);
+                var child = await _context.Children.FirstOrDefaultAsync(x => x.ChildId == request.ChildId, cancellationToken);
 
                 if (child == null)
                 {
@@ -56,7 +56,7 @@ namespace Server.Features.Babysitters
                 }
 
                 var currentUserUsername = _currentUser.GetCurrentUsername();
-                var currentUser = await _context.Persons.FirstAsync(x => x.Username == currentUserUsername, cancellationToken);
+                var currentUser = await _context.Persons.FirstOrDefaultAsync(x => x.Username == currentUserUsername, cancellationToken);
                 
                 if(currentUser.PersonId != child.ParentId)
                 {

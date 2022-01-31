@@ -47,12 +47,15 @@ namespace Server.Features.Babysitters
         }
         protected async Task<List<Babysitter>> GetBabysittersAsync(ApplicationContext applicationContext, int childId, CancellationToken cancellationToken, IMapper mapper)
         {
-            var query = from p in applicationContext.Persons
+            /*var query = from p in applicationContext.Persons
                         join cp in applicationContext.ChildPersons on p.PersonId equals cp.PersonId
                         where cp.ChildId == childId
-                        select p;
+                        select p;*/
 
-            var babysitters = await query.ToListAsync(cancellationToken);
+            var babysitters = await applicationContext.Persons.Include(cp => cp.ChildPersons).Where(cp=> cp.ChildPersons.Any(cp=>cp.ChildId==childId)).ToListAsync();
+            //var babysitters2 = await applicationContext.Persons.Include(cp => cp.ChildPersons).ThenInclude(x => x.ChildId == childId).ToListAsync();
+
+            //var babysitters = await query.ToListAsync(cancellationToken);
 
             var babysitterList = mapper.Map<List<Person>, List<Babysitter>>(babysitters);
 

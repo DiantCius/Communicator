@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Server.Domain
@@ -9,9 +10,11 @@ namespace Server.Domain
     {
         public int ChatId { get; set; }
         public string Name { get; set; }
-        public int PersonId { get; set; }
-        public List<ChatPerson> ChatPersons { get; set; } = new List<ChatPerson>();
-        public List<Message> Messages { get; set; } = new List<Message>();
+        public string Username { get; set; }
+        [JsonIgnore]
+        public List<ChatPerson> ChatPersons { get; set; } 
+        [JsonIgnore]
+        public List<Message> Messages { get; set; } 
 
     }
 }

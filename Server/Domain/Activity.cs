@@ -10,6 +10,7 @@ namespace Server.Domain
     {
         public int ActivityId { get; set; }
         public string Action { get; set; }
+        public string Notes { get; set; }
         public DateTime PostTime { get; set; }
         public Person Author { get; set; }
         [JsonIgnore]

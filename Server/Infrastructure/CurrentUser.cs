@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Server.Infrastructure
 {
-    public class CurrentUser : ICurrentUser
+    public class CurrentUser
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 

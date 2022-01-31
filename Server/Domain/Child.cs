@@ -15,8 +15,8 @@ namespace Server.Domain
         public DateTime BirthDate { get; set; }
         public int ParentId { get; set; }
         [JsonIgnore]
-        public List<ChildPerson> ChildPersons { get; set; } = new List<ChildPerson>();
+        public List<ChildPerson> ChildPersons { get; set; } 
         [JsonIgnore]
-        public List<Activity> Activities { get; set; } = new List<Activity>();
+        public List<Activity> Activities { get; set; } 
     }
 }
