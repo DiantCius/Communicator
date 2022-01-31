@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -15,12 +16,14 @@ namespace Server.Infrastructure.Filters
             if (!context.ModelState.IsValid)
             {
                 var validationResult = new ContentResult();
-                string error = null;
+                var sb = new StringBuilder();
 
                 foreach (var valuePair in context.ModelState)
                 {
-                    error += valuePair.Value.Errors.Select(x => x.ErrorMessage).Aggregate((a, b) => a + b) + " ";
+                    sb.Append(valuePair.Value.Errors.Select(x => x.ErrorMessage).Aggregate((a, b) => a + b) + " ");
                 }
+
+                string error = sb.ToString();
 
                 string content = JsonSerializer.Serialize(new { error }); 
                 validationResult.Content = content;

@@ -45,7 +45,7 @@ namespace Server.Infrastructure.Errors
                             error = ae.ErrorMessage
                         });
                     break;
-                case Exception e:
+                case Exception:
                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     error = JsonSerializer.Serialize(
                         new
