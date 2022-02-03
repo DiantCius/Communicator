@@ -106,6 +106,31 @@ namespace Server
 
             services.AddAutoMapper(typeof(Startup));
 
+            services.AddSwaggerGen(c =>
+            {
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please insert JWT with Bearer into field",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    BearerFormat = "JWT"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {   new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                    },
+                    Array.Empty<string>()}
+                });
+
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Server", Version = "v1" });
+                c.CustomSchemaIds(d => d.FullName);
+
+            });
+
             string sender = Configuration.GetSection("Gmail")["Sender"];
             string from = Configuration.GetSection("Mail")["From"];
             string password = Configuration.GetSection("Gmail")["Password"];
@@ -123,6 +148,8 @@ namespace Server
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Server"));
             }
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
