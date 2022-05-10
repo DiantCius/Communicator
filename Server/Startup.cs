@@ -66,16 +66,15 @@ namespace Server
                options.UseNpgsql(defaultConnectionString));
 
             var serviceProvider = services.BuildServiceProvider();
-            var dbContext = serviceProvider.GetRequiredService<ApplicationContext>();
-            dbContext.Database.Migrate();
-            /*try
+
+            try
             {
                 var dbContext = serviceProvider.GetRequiredService<ApplicationContext>();
                 dbContext.Database.Migrate();
             }
             catch
             {
-            }*/
+            }
 
 
             services.AddMediatR(Assembly.GetExecutingAssembly());
