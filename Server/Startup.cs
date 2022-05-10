@@ -49,6 +49,7 @@ namespace Server
             
             // Use connection string provided at runtime by Heroku.
             var connectionUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+            Console.WriteLine(connectionUrl+"dupa");
 
             connectionUrl = connectionUrl.Replace("postgres://", string.Empty);
             var userPassSide = connectionUrl.Split("@")[0];
