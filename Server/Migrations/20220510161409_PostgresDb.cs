@@ -1,9 +1,10 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Server.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class PostgresDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,10 +12,10 @@ namespace Server.Migrations
                 name: "Chats",
                 columns: table => new
                 {
-                    ChatId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PersonId = table.Column<int>(type: "int", nullable: false)
+                    ChatId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Username = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -25,11 +26,11 @@ namespace Server.Migrations
                 name: "Children",
                 columns: table => new
                 {
-                    ChildId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ParentId = table.Column<int>(type: "int", nullable: false)
+                    ChildId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    BirthDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ParentId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -40,12 +41,12 @@ namespace Server.Migrations
                 name: "Persons",
                 columns: table => new
                 {
-                    PersonId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    InvitedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HashedPassword = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    PersonId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    Username = table.Column<string>(type: "text", nullable: true),
+                    InvitedBy = table.Column<string>(type: "text", nullable: true),
+                    HashedPassword = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -56,12 +57,13 @@ namespace Server.Migrations
                 name: "Activities",
                 columns: table => new
                 {
-                    ActivityId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Action = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PostTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AuthorId = table.Column<int>(type: "int", nullable: false),
-                    ChildId = table.Column<int>(type: "int", nullable: false)
+                    ActivityId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Action = table.Column<string>(type: "text", nullable: true),
+                    Notes = table.Column<string>(type: "text", nullable: true),
+                    PostTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    AuthorId = table.Column<int>(type: "integer", nullable: false),
+                    ChildId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -84,8 +86,8 @@ namespace Server.Migrations
                 name: "ChatPersons",
                 columns: table => new
                 {
-                    PersonId = table.Column<int>(type: "int", nullable: false),
-                    ChatId = table.Column<int>(type: "int", nullable: false)
+                    PersonId = table.Column<int>(type: "integer", nullable: false),
+                    ChatId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -108,8 +110,8 @@ namespace Server.Migrations
                 name: "ChildPersons",
                 columns: table => new
                 {
-                    ChildId = table.Column<int>(type: "int", nullable: false),
-                    PersonId = table.Column<int>(type: "int", nullable: false)
+                    ChildId = table.Column<int>(type: "integer", nullable: false),
+                    PersonId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -132,11 +134,11 @@ namespace Server.Migrations
                 name: "Invitations",
                 columns: table => new
                 {
-                    InvitationId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AddressedUserId = table.Column<int>(type: "int", nullable: false),
-                    ChildId = table.Column<int>(type: "int", nullable: false),
-                    InviteDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    InvitationId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AddressedUserId = table.Column<int>(type: "integer", nullable: false),
+                    ChildId = table.Column<int>(type: "integer", nullable: false),
+                    InviteDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -159,13 +161,13 @@ namespace Server.Migrations
                 name: "Messages",
                 columns: table => new
                 {
-                    MessageId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    WhenSent = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ChatId = table.Column<int>(type: "int", nullable: false),
-                    PersonId = table.Column<int>(type: "int", nullable: false)
+                    MessageId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Text = table.Column<string>(type: "text", nullable: true),
+                    WhenSent = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    Username = table.Column<string>(type: "text", nullable: true),
+                    ChatId = table.Column<int>(type: "integer", nullable: false),
+                    PersonId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -37,10 +37,10 @@ namespace Server.Features.Children
             return _mediator.Send(new DeleteChild.Command(childId), cancellationToken);
         }
 
-        [HttpGet("details")]
+        /*[HttpGet("details")]
         public Task<GetChildResponse> GetById(int id, CancellationToken cancellationToken)
         {
             return _mediator.Send(new GetChild.Query(id), cancellationToken);
-        }
+        }*/
     }
 }

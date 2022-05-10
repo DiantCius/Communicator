@@ -42,8 +42,39 @@ namespace Server
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationContext>(options => 
-                options.UseSqlServer(Configuration.GetConnectionString("Default")));
+            //services.AddDbContext<ApplicationContext>(options => 
+            //    options.UseSqlServer(Configuration.GetConnectionString("Default")));
+            var defaultConnectionString = string.Empty;
+
+            
+            // Use connection string provided at runtime by Heroku.
+            var connectionUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+            connectionUrl = connectionUrl.Replace("postgres://", string.Empty);
+            var userPassSide = connectionUrl.Split("@")[0];
+            var hostSide = connectionUrl.Split("@")[1];
+
+            var user = userPassSide.Split(":")[0];
+            var pwd = userPassSide.Split(":")[1];
+            var host = hostSide.Split("/")[0];
+            var database = hostSide.Split("/")[1].Split("?")[0];
+
+            defaultConnectionString = $"Host={host};Database={database};Username={user};Password={pwd};SSL Mode=Require;Trust Server Certificate=true";
+            
+
+            services.AddDbContext<ApplicationContext>(options =>
+               options.UseNpgsql(defaultConnectionString));
+
+            var serviceProvider = services.BuildServiceProvider();
+            try
+            {
+                var dbContext = serviceProvider.GetRequiredService<ApplicationContext>();
+                dbContext.Database.Migrate();
+            }
+            catch
+            {
+            }
+
 
             services.AddMediatR(Assembly.GetExecutingAssembly());
 
@@ -145,12 +176,11 @@ namespace Server
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Server"));
-            }
+
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Server"));
+            
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
 
