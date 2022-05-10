@@ -61,7 +61,7 @@ namespace Server
 
             defaultConnectionString = $"Host={host};Database={database};Username={user};Password={pwd};SSL Mode=Require;Trust Server Certificate=true";
             
-            //:)
+            
             services.AddDbContext<ApplicationContext>(options =>
                options.UseNpgsql(defaultConnectionString));
 
