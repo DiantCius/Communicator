@@ -66,7 +66,6 @@ namespace Server
                 var database = hostSide.Split("/")[1].Split("?")[0];
 
                 defaultConnectionString = $"Host={host};Database={database};Username={user};Password={pwd};SSL Mode=Require;Trust Server Certificate=true";
-                Console.WriteLine(defaultConnectionString);
 
             }
             
@@ -78,7 +77,9 @@ namespace Server
             try
             {
                 var dbContext = serviceProvider.GetRequiredService<ApplicationContext>();
+                Console.WriteLine("Przed migracja");
                 dbContext.Database.Migrate();
+                Console.WriteLine("Po migracji");
             }
             catch
             {
