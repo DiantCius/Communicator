@@ -66,6 +66,7 @@ namespace Server
                 var database = hostSide.Split("/")[1].Split("?")[0];
 
                 defaultConnectionString = $"Host={host};Database={database};Username={user};Password={pwd};SSL Mode=Require;Trust Server Certificate=true";
+                Console.WriteLine(defaultConnectionString);
 
             }
             
