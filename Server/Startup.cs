@@ -73,14 +73,13 @@ namespace Server
             services.AddDbContext<ApplicationContext>(options =>
                options.UseNpgsql(defaultConnectionString));
 
+
             var serviceProvider = services.BuildServiceProvider();
 
             try
             {
                 var dbContext = serviceProvider.GetRequiredService<ApplicationContext>();
-                Console.WriteLine("Przed migracja");
                 dbContext.Database.Migrate();
-                Console.WriteLine("Po migracji");
             }
             catch
             {

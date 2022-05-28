@@ -33,7 +33,7 @@ namespace Server.Features.Chats
             var message = new Message()
             {
                 Text = text,
-                WhenSent = DateTime.Now,
+                WhenSent = DateTime.UtcNow,
                 ChatId = chatId,
                 PersonId = person.PersonId,
                 Username = person.Username
