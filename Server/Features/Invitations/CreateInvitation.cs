@@ -76,7 +76,7 @@ namespace Server.Features.Invitations
                 {
                     AddressedUserId = person.PersonId,
                     ChildId = child.ChildId,
-                    InviteDate = DateTime.Now
+                    InviteDate = DateTime.UtcNow
                 };
 
                 await _context.Invitations.AddAsync(invitation, cancellationToken);
